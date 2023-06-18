@@ -9,11 +9,11 @@ export default defineConfig({
     })
   ],
   build: {
-    target: 'es2018',
+    target: 'es2016',
     lib: {
       entry: resolve(__dirname, './index.ts'),
-      name: 'web-storage-plus',
-      fileName: 'storage'
+      name: 'webStoragePlus',
+      fileName: 'web-storage-plus'
     }
   }
 });
