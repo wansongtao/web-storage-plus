@@ -1,7 +1,7 @@
 {
   "name": "web-storage-plus",
   "description": "localStorage and sessionStorage, support setting expiration time(本地/会话存储，支持设置过期时间)",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "files": [
     "dist"
@@ -12,7 +12,8 @@
   "exports": {
     ".": {
       "import": "./dist/web-storage-plus.js",
-      "require": "./dist/web-storage-plus.umd.cjs"
+      "require": "./dist/web-storage-plus.umd.cjs",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "scripts": {
@@ -30,6 +31,14 @@
   ],
   "author": "wansongtao",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wansongtao/web-storage-plus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wansongtao/web-storage-plus/issues"
+  },
+  "homepage": "https://github.com/wansongtao/web-storage-plus#readme",
   "devDependencies": {
     "@types/node": "^20.3.1",
     "eslint": "^8.43.0",
