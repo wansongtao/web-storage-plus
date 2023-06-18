@@ -1,0 +1,43 @@
+{
+  "name": "web-storage-plus",
+  "description": "localStorage and sessionStorage, support setting expiration time(本地/会话存储，支持设置过期时间)",
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/storage.umd.cjs",
+  "module": "./dist/storage.js",
+  "typings": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/storage.js",
+      "require": "./dist/storage.umd.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsc && vite build",
+    "publish": "vite build && npm publish"
+  },
+  "keywords": [
+    "localStorage",
+    "sessionStorage",
+    "storage",
+    "web storage",
+    "本地存储",
+    "会话存储",
+    "浏览器存储"
+  ],
+  "author": "wansongtao",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9"
+  },
+  "dependencies": {
+    "@types/node": "^20.3.1",
+    "eslint": "^8.43.0",
+    "prettier": "^2.8.8",
+    "vite-plugin-dts": "^2.3.0"
+  }
+}
