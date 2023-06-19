@@ -1,3 +1,5 @@
+
+
 export interface IConfig {
   isLocalStorage?: boolean;
   maxAge?: number;
@@ -12,7 +14,10 @@ interface IStorage<T = unknown> {
 /**
  * 默认前缀
  */
-const PREFIX = 'st-';
+let PREFIX = 'st-';
+export const setGlobalPrefix = (prefix: string) => {
+  PREFIX = prefix;
+};
 
 /**
  * 本地/会话存储，支持设置过期时间
