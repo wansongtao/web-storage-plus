@@ -1,5 +1,3 @@
-
-
 export interface IConfig {
   isLocalStorage?: boolean;
   maxAge?: number;
@@ -11,12 +9,9 @@ interface IStorage<T = unknown> {
   expire: number;
 }
 
-/**
- * 默认前缀
- */
-let PREFIX = 'st-';
+let globalPrefix = 'st-';
 export const setGlobalPrefix = (prefix: string) => {
-  PREFIX = prefix;
+  globalPrefix = prefix;
 };
 
 /**
@@ -32,7 +27,7 @@ export const setGlobalPrefix = (prefix: string) => {
 export const setStorage = <T = unknown>(
   key: string,
   value: T,
-  { isLocalStorage = true, maxAge, prefix = PREFIX }: IConfig = {}
+  { isLocalStorage = true, maxAge, prefix = globalPrefix }: IConfig = {}
 ) => {
   const storage: IStorage = { data: value, expire: 0 };
   if (maxAge) {
@@ -64,7 +59,7 @@ export const setStorage = <T = unknown>(
  */
 export const getStorage = <T = unknown>(
   key: string,
-  { isLocalStorage = true, prefix = PREFIX }: IConfig = {}
+  { isLocalStorage = true, prefix = globalPrefix }: IConfig = {}
 ): T | null => {
   const name = `${prefix}${key}`;
   const jsonText = isLocalStorage
@@ -100,7 +95,7 @@ export const getStorage = <T = unknown>(
  */
 export const removeStorage = (
   key: string,
-  { isLocalStorage = true, prefix = PREFIX }: IConfig = {}
+  { isLocalStorage = true, prefix = globalPrefix }: IConfig = {}
 ) => {
   const name = `${prefix}${key}`;
 
