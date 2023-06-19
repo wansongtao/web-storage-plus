@@ -10,25 +10,30 @@ interface IStorage<T = unknown> {
 }
 
 let globalPrefix = 'st-';
+
+/**
+ * set global prefix
+ * @param {string} prefix
+ */
 export const setGlobalPrefix = (prefix: string) => {
   globalPrefix = prefix;
 };
 
 /**
- * 本地/会话存储，支持设置过期时间
- * @param key 键
- * @param value 值
- * @param config 配置
- * @param [config.isLocalStorage] 是否本地存储，默认为true
- * @param [config.maxAge] 多少秒后过期，默认不过期
- * @param [config.prefix] key 前缀，默认为设置的全局前缀
- * @returns
+ * set localStorage/sessionStorage, if maxAge is set, it will be expired after maxAge seconds
+ * @param {string} key
+ * @param {any} value
+ * @param {object} [config]
+ * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
+ * @param {number} [config.maxAge] Expiration time, in seconds
+ * @param {string} [config.prefix] default globalPrefix
+ * @returns {void}
  */
 export const setStorage = <T = unknown>(
   key: string,
   value: T,
   { isLocalStorage = true, maxAge, prefix = globalPrefix }: IConfig = {}
-) => {
+): void => {
   const storage: IStorage = { data: value, expire: 0 };
   if (maxAge) {
     storage.expire = Date.now() + maxAge * 1000;
@@ -50,11 +55,11 @@ export const setStorage = <T = unknown>(
 };
 
 /**
- * 取出本地/会话存储中未过期的数据，已过期、未找到返回null
- * @param key
- * @param config
- * @param config.isLocalStorage 是否本地存储，默认为true
- * @param config.prefix key 前缀，默认为设置的全局前缀
+ * get localStorage/sessionStorage
+ * @param {string} key
+ * @param {object} [config]
+ * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
+ * @param {string} [config.prefix] default globalPrefix
  * @returns
  */
 export const getStorage = <T = unknown>(
@@ -86,12 +91,11 @@ export const getStorage = <T = unknown>(
 };
 
 /**
- * 删除本地/会话存储中的对应数据
- * @param key
- * @param config
- * @param config.isLocalStorage 是否本地存储，默认为true
- * @param config.prefix key 前缀，默认为设置的全局前缀
- * @returns
+ * remove localStorage/sessionStorage
+ * @param {string} key
+ * @param {object} [config]
+ * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
+ * @param {string} [config.prefix] default globalPrefix
  */
 export const removeStorage = (
   key: string,
