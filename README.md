@@ -9,14 +9,29 @@ $ pnpm add web-storage-plus
 ```
 
 ## example
+### TS
 ```typescript
-import { setStorage, getStorage, removeStorage } from 'web-storage-plus'
+import { setStorage, getStorage, removeStorage, setGlobalPrefix } from 'web-storage-plus'
 
-const data = { name: 'test', data: 'this is a test.' };
+const data = { name: 'test', data: 'this is a test.' }
+setGlobalPrefix('test_')
 
-setStorage('storage', data, { maxAge: 60 * 60 * 24 * 7, prefix: 'test_' })
+setStorage('storage', data, { maxAge: 60 * 60 * 24 * 7 })
 
-getStorage<{ name: string; data: string; }>('storage', { prefix: 'test_' }) // { name: 'test', data: 'this is a test.' }
+getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 'this is a test.' }
 
-removeStorage('storage', { prefix: 'test_' })
+removeStorage('storage')
+```
+### JS
+```javascript
+import { setStorage, getStorage, removeStorage, setGlobalPrefix } from 'web-storage-plus'
+
+const data = { name: 'test', data: 'this is a test.' }
+setGlobalPrefix('test_')
+
+setStorage('storage', data, { maxAge: 60 * 60 * 24 * 7 })
+
+getStorage('storage') // { name: 'test', data: 'this is a test.' }
+
+removeStorage('storage')
 ```
