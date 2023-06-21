@@ -47,6 +47,8 @@ Get the value of the given key in localStorage or sessionStorage.
 If the options object is provided:
 - `options.prefix` - a string representing the prefix of the key name(default globalPrefix).
 - `options.isLocalStorage` - a boolean representing the type of Web Storage(default true).
+- `options.isDeleteExpired` - a boolean representing whether to delete the expired key-value(default false).
+
 ### removeStorage(key, [options])
 Remove the given key in localStorage or sessionStorage.  
 If the options object is provided:

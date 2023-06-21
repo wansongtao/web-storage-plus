@@ -60,11 +60,20 @@ export const setStorage = <T = unknown>(
  * @param {object} [config]
  * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
  * @param {string} [config.prefix] default globalPrefix
+ * @param {boolean} [config.isDeleteExpired] delete expired data, default false
  * @returns
  */
 export const getStorage = <T = unknown>(
   key: string,
-  { isLocalStorage = true, prefix = globalPrefix }: IConfig = {}
+  {
+    isLocalStorage = true,
+    prefix = globalPrefix,
+    isDeleteExpired
+  }: {
+    isLocalStorage?: boolean;
+    prefix?: string;
+    isDeleteExpired?: boolean;
+  } = {}
 ): T | null => {
   const name = `${prefix}${key}`;
   const jsonText = isLocalStorage
@@ -79,6 +88,10 @@ export const getStorage = <T = unknown>(
   try {
     const storage: IStorage<T> = JSON.parse(jsonText);
     if (storage.expire && storage.expire <= Date.now()) {
+      if (isDeleteExpired) {
+        removeStorage(key, { isLocalStorage, prefix });
+      }
+
       console.warn(`${name}: data expired!`);
       return null;
     }
@@ -99,7 +112,10 @@ export const getStorage = <T = unknown>(
  */
 export const removeStorage = (
   key: string,
-  { isLocalStorage = true, prefix = globalPrefix }: IConfig = {}
+  {
+    isLocalStorage = true,
+    prefix = globalPrefix
+  }: { isLocalStorage?: boolean; prefix?: string } = {}
 ) => {
   const name = `${prefix}${key}`;
 
