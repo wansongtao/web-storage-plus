@@ -72,18 +72,18 @@ export const getStorage = <T = unknown>(
     prefix?: string;
     isDeleteExpired?: boolean;
   } = {}
-): T | null => {
+) => {
   const name = `${prefix}${key}`;
-  const jsonText = isLocalStorage
-    ? localStorage.getItem(name)
-    : sessionStorage.getItem(name);
-
-  if (jsonText === null) {
-    console.warn(`not found ${name}`);
-    return null;
-  }
-
   try {
+    const jsonText = isLocalStorage
+      ? localStorage.getItem(name)
+      : sessionStorage.getItem(name);
+
+    if (jsonText === null) {
+      console.warn(`not found ${name}`);
+      return null;
+    }
+
     const storage: IStorage<T> = JSON.parse(jsonText);
     if (storage.expire && storage.expire <= Date.now()) {
       if (isDeleteExpired) {
@@ -116,9 +116,14 @@ export const removeStorage = (
 ) => {
   const name = `${prefix}${key}`;
 
-  if (isLocalStorage) {
-    localStorage.removeItem(name);
-  } else {
+  try {
+    if (isLocalStorage) {
+      localStorage.removeItem(name);
+      return;
+    }
+
     sessionStorage.removeItem(name);
+  } catch (ex) {
+    console.error(ex);
   }
 };
