@@ -12,7 +12,6 @@ interface IStorage<T = unknown> {
 let globalPrefix = 'st-';
 
 /**
- * set global prefix
  * @param {string} prefix
  */
 export const setGlobalPrefix = (prefix: string) => {
@@ -55,7 +54,6 @@ export const setStorage = <T = unknown>(
 };
 
 /**
- * get localStorage/sessionStorage
  * @param {string} key
  * @param {object} [config]
  * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
@@ -104,7 +102,6 @@ export const getStorage = <T = unknown>(
 };
 
 /**
- * remove localStorage/sessionStorage
  * @param {string} key
  * @param {object} [config]
  * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
