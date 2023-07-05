@@ -1,33 +1,37 @@
-import { stringify } from '../util';
+import { stringify } from '../index';
 import { test, expect } from 'vitest';
 
-test('parse', () => {
+test('stringify', () => {
   expect(stringify(undefined)).toBe(
-    `"'type': {{undefined}}-'value':{{undefined}}"`
+    '"type: {{undefined}}-value: {{undefined}}"'
   );
-  expect(stringify(NaN)).toBe(`"'type': {{number}}-'value':{{NaN}}"`);
-  expect(stringify(123n)).toBe(`"'type': {{bigint}}-'value':{{123}}"`);
-  expect(stringify(Infinity)).toBe(`"'type': {{number}}-'value':{{Infinity}}"`);
+
+  expect(stringify(NaN)).toBe('"type: {{number}}-value: {{NaN}}"');
+  expect(stringify(123n)).toBe('"type: {{bigint}}-value: {{123}}"');
+  expect(stringify(Infinity)).toBe('"type: {{number}}-value: {{Infinity}}"');
   expect(stringify(-Infinity)).toBe(
-    `"'type': {{number}}-'value':{{-Infinity}}"`
+    '"type: {{number}}-value: {{-Infinity}}"'
   );
+
   expect(stringify(new Date(1688543045842))).toBe(
-    `"'type': {{date}}-'value':{{1688543045842}}"`
+    '"type: {{date}}-value: {{1688543045842}}"'
   );
-  expect(stringify(/0+/gi)).toBe(`"'type': {{regexp}}-'value':{{/0+/gi}}"`);
-  expect(stringify(/0+/)).toBe(`"'type': {{regexp}}-'value':{{/0+/}}"`);
+
+  expect(stringify(/0+/gi)).toBe('"type: {{regexp}}-value: {{/0+/gi}}"');
+  expect(stringify(/0+/)).toBe('"type: {{regexp}}-value: {{/0+/}}"');
   expect(stringify(new RegExp('1+aa'))).toBe(
-    `"'type': {{regexp}}-'value':{{/1+aa/}}"`
+    '"type: {{regexp}}-value: {{/1+aa/}}"'
   );
+
   expect(stringify(() => {})).toBe(
-    `"'type': {{function}}-'value':{{() => {\\n  }}}"`
+    '"type: {{function}}-value: {{() => {\\n  }}}"'
   );
   expect(
     stringify(function () {
       console.log('test');
     })
   ).toBe(
-    `"'type': {{function}}-'value':{{() {\\n      console.log(\\"test\\");\\n    }}}"`
+    '"type: {{function}}-value: {{() {\\n      console.log(\\"test\\");\\n    }}}"'
   );
 
   expect(
@@ -40,6 +44,6 @@ test('parse', () => {
       undefined
     ])
   ).toBe(
-    `[{"test":"'type': {{number}}-'value':{{Infinity}}"},{"date":"'type': {{date}}-'value':{{1688543045842}}"},"'type': {{date}}-'value':{{1688543045842}}","'type': {{bigint}}-'value':{{123}}","'type': {{number}}-'value':{{NaN}}","'type': {{undefined}}-'value':{{undefined}}"]`
+    '[{"test":"type: {{number}}-value: {{Infinity}}"},{"date":"type: {{date}}-value: {{1688543045842}}"},"type: {{date}}-value: {{1688543045842}}","type: {{bigint}}-value: {{123}}","type: {{number}}-value: {{NaN}}","type: {{undefined}}-value: {{undefined}}"]'
   );
 });
