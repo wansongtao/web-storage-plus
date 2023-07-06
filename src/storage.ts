@@ -39,7 +39,7 @@ interface IStorage<T = unknown> {
  * @param {number} [config.maxAge] Expiration time, in seconds
  * @param {string} [config.prefix] default globalPrefix
  * @param {function} [config.stringifyFn] default globalStringifyFn,
- * undefined - JSON.stringify,
+ * falsy - JSON.stringify,
  * This method converts the JavaScript value to a JSON string
  * @returns {void}
  */
@@ -100,7 +100,7 @@ export const setGlobalParseFn = (fn: IParseFn) => {
  * true - localStorage, false - sessionStorage
  * @param {string} [config.prefix] default globalPrefix
  * @param {boolean} [config.isDeleteExpired] default false, delete expired data
- * @param {function} [config.parseFn] default globalParseFn, undefined - JSON.parse,
+ * @param {function} [config.parseFn] default globalParseFn, falsy - JSON.parse,
  * This method parses a JSON string
  * @returns
  */
@@ -147,7 +147,8 @@ export const getStorage = <T = unknown>(
 /**
  * @param {string} key
  * @param {object} [config]
- * @param {boolean} [config.isLocalStorage] true - localStorage, false - sessionStorage, default true
+ * @param {boolean} [config.isLocalStorage] default true, 
+ * true - localStorage, false - sessionStorage
  * @param {string} [config.prefix] default globalPrefix
  */
 export const removeStorage = (
@@ -157,9 +158,9 @@ export const removeStorage = (
     prefix = globalPrefix
   }: { isLocalStorage?: boolean; prefix?: string } = {}
 ) => {
-  const name = `${prefix}${key}`;
-
   try {
+    const name = `${prefix}${key}`;
+    
     if (isLocalStorage) {
       localStorage.removeItem(name);
       return;
