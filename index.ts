@@ -7,9 +7,10 @@
  */
 export const stringify = (obj: any): string => {
   const toJSON = Date.prototype.toJSON;
-  Date.prototype.toJSON = function () {
-    return `type: {{date}}-value: {{${this.getTime()}}}`;
-  };
+  Date.prototype.toJSON = null as any;
+
+  const regexp =
+    /^type: {{(original|number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
 
   const jsonStr = JSON.stringify(obj, (_key, value) => {
     if (value instanceof Function) {
@@ -35,6 +36,12 @@ export const stringify = (obj: any): string => {
     if (typeof value === 'bigint') {
       return `type: {{bigint}}-value: {{${value.toString()}}}`;
     }
+    if (value instanceof Date) {
+      return `type: {{date}}-value: {{${value.getTime()}}}`;
+    }
+    if (regexp.test(value)) {
+      return `type: {{original}}-value: {{${value}}}`;
+    }
 
     return value;
   });
@@ -52,9 +59,10 @@ export const stringify = (obj: any): string => {
  */
 export const parse = <T = any>(str: string): T => {
   const regexp =
-    /^type: {{(number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
+    /^type: {{(original|number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
 
   type IType =
+    | 'original'
     | 'number'
     | 'undefined'
     | 'date'
@@ -92,6 +100,9 @@ export const parse = <T = any>(str: string): T => {
     },
     bigint: (text: string) => {
       return BigInt(text);
+    },
+    original: (text: string) => {
+      return text;
     }
   };
 
