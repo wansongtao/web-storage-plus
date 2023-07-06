@@ -6,6 +6,10 @@ test('stringify', () => {
     '"type: {{undefined}}-value: {{undefined}}"'
   );
 
+  expect(stringify('type: {{undefined}}-value: {{undefined}}')).toBe(
+    '"type: {{original}}-value: {{type: {{undefined}}-value: {{undefined}}}}"'
+  );
+
   expect(stringify(NaN)).toBe('"type: {{number}}-value: {{NaN}}"');
   expect(stringify(123n)).toBe('"type: {{bigint}}-value: {{123}}"');
   expect(stringify(Infinity)).toBe('"type: {{number}}-value: {{Infinity}}"');

@@ -7,6 +7,12 @@ test('parse', () => {
   expect(parse(`"type: {{undefined}}-value: {{text}}"`)).toBe(
     'type: {{undefined}}-value: {{text}}'
   );
+  expect(
+    parse(
+      '"type: {{original}}-value: {{type: {{undefined}}-value: {{undefined}}}}"'
+    )
+  ).toBe('type: {{undefined}}-value: {{undefined}}');
+  
   expect(parse(`{"test": "type: {{number}}-value: {{Infinity}}"}`)).toEqual({
     test: Infinity
   });
