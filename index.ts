@@ -7,7 +7,7 @@ import {
   removeStorage
 } from './src/storage';
 import type { IConfig, IGetStorageConfig } from './src/storage';
-import { stringify, parse } from './src/util';
+import { stringify, parse, encode, decode } from './src/util';
 
 export {
   setGlobalPrefix,
@@ -17,7 +17,9 @@ export {
   getStorage,
   removeStorage,
   stringify,
-  parse
+  parse,
+  encode,
+  decode
 };
 
 export type { IConfig, IGetStorageConfig };

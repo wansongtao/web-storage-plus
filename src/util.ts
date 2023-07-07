@@ -129,3 +129,31 @@ export const parse = <T = any>(str: string): T => {
     return value;
   });
 };
+
+/**
+ * encode string to base64
+ * @param {string} str
+ * @returns
+ */
+export const encode = (str: string) => {
+  try {
+    return btoa(encodeURIComponent(str));
+  } catch (e) {
+    console.error(e);
+    return str;
+  }
+};
+
+/**
+ * decode base64 to string
+ * @param {string} str
+ * @returns
+ */
+export const decode = (str: string) => {
+  try {
+    return decodeURIComponent(atob(str));
+  } catch (e) {
+    console.error(e);
+    return str;
+  }
+};
