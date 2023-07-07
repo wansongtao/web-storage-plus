@@ -2,63 +2,76 @@
  * enhanced JSON.stringify, support function, regexp, date, undefined,
  * NaN, Infinity, -Infinity, bigint
  * @param obj
+ * @param replacer A function that alters the behavior of the stringification process
  * @example new Date(1625673600000) => "type: {{date}}-value: {{1625673600000}}"
  * @example "type: {{test}}-value: {{t}}" => "type: {{original}}-value: {{type: {{test}}-value: {{t}}}}"
  * @returns
  */
-export const stringify = (obj: any): string => {
-  const toJSON = Date.prototype.toJSON;
-  Date.prototype.toJSON = null as any;
+export const stringify = (
+  obj: any,
+  replacer?: (k: any, v: any) => string | number | boolean | null
+): string => {
+  try {
+    const toJSON = Date.prototype.toJSON;
+    Date.prototype.toJSON = null as any;
 
-  const regexp =
-    /^type: {{(original|number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
+    const regexp =
+      /^type: {{(original|number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
 
-  const jsonStr = JSON.stringify(obj, (_key, value) => {
-    if (value instanceof Function) {
-      return `type: {{function}}-value: {{${value
-        .toString()
-        .replace(/^function/, '')}}}`;
-    }
-    if (value instanceof RegExp) {
-      return `type: {{regexp}}-value: {{${value.toString()}}}`;
-    }
-    if (value === undefined) {
-      return `type: {{undefined}}-value: {{undefined}}`;
-    }
-    if (Number.isNaN(value)) {
-      return `type: {{number}}-value: {{NaN}}`;
-    }
-    if (value === Infinity) {
-      return `type: {{number}}-value: {{Infinity}}`;
-    }
-    if (value === -Infinity) {
-      return `type: {{number}}-value: {{-Infinity}}`;
-    }
-    if (typeof value === 'bigint') {
-      return `type: {{bigint}}-value: {{${value.toString()}}}`;
-    }
-    if (value instanceof Date) {
-      return `type: {{date}}-value: {{${value.getTime()}}}`;
-    }
-    if (regexp.test(value)) {
-      return `type: {{original}}-value: {{${value}}}`;
-    }
+    const jsonStr = JSON.stringify(obj, (key, value) => {
+      try {
+        if (regexp.test(value)) {
+          value = `type: {{original}}-value: {{${value}}}`;
+        } else if (value instanceof Function) {
+          value = `type: {{function}}-value: {{${value
+            .toString()
+            .replace(/^function/, '')}}}`;
+        } else if (value instanceof RegExp) {
+          value = `type: {{regexp}}-value: {{${value.toString()}}}`;
+        } else if (value === undefined) {
+          value = `type: {{undefined}}-value: {{undefined}}`;
+        } else if (Number.isNaN(value)) {
+          return `type: {{number}}-value: {{NaN}}`;
+        } else if (value === Infinity) {
+          value = `type: {{number}}-value: {{Infinity}}`;
+        } else if (value === -Infinity) {
+          value = `type: {{number}}-value: {{-Infinity}}`;
+        } else if (typeof value === 'bigint') {
+          value = `type: {{bigint}}-value: {{${value.toString()}}}`;
+        } else if (value instanceof Date) {
+          value = `type: {{date}}-value: {{${value.getTime()}}}`;
+        }
 
-    return value;
-  });
+        if (key !== '' && replacer) {
+          value = replacer(key, value);
+        }
+      } catch (e) {
+        console.error(e);
+      }
 
-  Date.prototype.toJSON = toJSON;
-  return jsonStr;
+      return value;
+    });
+
+    Date.prototype.toJSON = toJSON;
+    return jsonStr;
+  } catch (e) {
+    console.error(e);
+    return '';
+  }
 };
 
 /**
  * enhanced JSON.parse, support function, regexp, date, undefined,
  * NaN, Infinity, -Infinity, bigint
  * @param str
+ * @param reviver A function that transforms the results
  * @example "type: {{regexp}}-value: {{/0/gi}}" => new RegExp('0', 'gi')
  * @returns
  */
-export const parse = <T = any>(str: string): T => {
+export const parse = <T = any>(
+  str: string,
+  reviver?: (k: string, v: any) => any
+): T => {
   const regexp =
     /^type: {{(original|number|undefined|date|regexp|function|bigint)}}-value: {{([^]+)}}$/;
 
@@ -107,20 +120,25 @@ export const parse = <T = any>(str: string): T => {
     }
   };
 
-  return JSON.parse(str, (_key, value) => {
-    if (typeof value !== 'string') {
-      return value;
-    }
-
+  return JSON.parse(str, (key, value) => {
     try {
-      const match = regexp.exec(value);
-      if (!match) {
+      if (typeof value !== 'string') {
+        if (key !== '' && reviver) {
+          return reviver(key, value);
+        }
         return value;
       }
 
-      const type = match[1] as IType;
-      if (strategies[type]) {
-        return strategies[type](match[2]);
+      const match = regexp.exec(value);
+      if (match) {
+        const type = match[1] as IType;
+        if (strategies[type]) {
+          value = strategies[type](match[2]);
+        }
+      }
+
+      if (key !== '' && reviver) {
+        return reviver(key, value);
       }
     } catch (e) {
       console.error(e);
