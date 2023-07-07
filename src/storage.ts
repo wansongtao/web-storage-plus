@@ -1,12 +1,22 @@
 let globalPrefix = 'st-';
-/**
- * @param {string} prefix
- */
 export const setGlobalPrefix = (prefix: string) => {
   globalPrefix = prefix;
 };
 
+type IEncryptFn = (data: string) => string;
 type IStringifyFn = (data: any) => string;
+export interface IConfig {
+  isLocalStorage?: boolean;
+  maxAge?: number;
+  prefix?: string;
+  stringifyFn?: IStringifyFn;
+  encryptFn?: IEncryptFn;
+}
+interface IStorage<T = unknown> {
+  data: T;
+  expire: number;
+}
+
 let globalStringifyFn: IStringifyFn | undefined = undefined;
 /**
  * set a global method to converts a JavaScript value to a JSON string
@@ -16,17 +26,10 @@ export const setGlobalStringifyFn = (fn: IStringifyFn) => {
   globalStringifyFn = fn;
 };
 
-export interface IConfig {
-  isLocalStorage?: boolean;
-  maxAge?: number;
-  prefix?: string;
-  stringifyFn?: IStringifyFn;
-}
-
-interface IStorage<T = unknown> {
-  data: T;
-  expire: number;
-}
+let globalEncryptFn: IEncryptFn | undefined = undefined;
+export const setGlobalEncryptFn = (fn: IEncryptFn) => {
+  globalEncryptFn = fn;
+};
 
 /**
  * set localStorage/sessionStorage, if maxAge is set, it will be expired
@@ -41,6 +44,7 @@ interface IStorage<T = unknown> {
  * @param {function} [config.stringifyFn] default globalStringifyFn,
  * falsy - JSON.stringify,
  * This method converts the JavaScript value to a JSON string
+ * @param {function} [config.encryptFn] default globalEncryptFn(undefined)
  * @returns {void}
  */
 export const setStorage = <T = unknown>(
@@ -50,7 +54,8 @@ export const setStorage = <T = unknown>(
     isLocalStorage = true,
     maxAge,
     prefix = globalPrefix,
-    stringifyFn = globalStringifyFn
+    stringifyFn = globalStringifyFn,
+    encryptFn = globalEncryptFn
   }: IConfig = {}
 ): void => {
   try {
@@ -64,7 +69,10 @@ export const setStorage = <T = unknown>(
     }
 
     const name = `${prefix}${key}`;
-    const json = stringifyFn(storage);
+    let json = stringifyFn(storage);
+    if (encryptFn) {
+      json = encryptFn(json);
+    }
 
     if (isLocalStorage) {
       localStorage.setItem(name, json);
@@ -81,6 +89,7 @@ export interface IGetStorageConfig {
   prefix?: string;
   isDeleteExpired?: boolean;
   parseFn?: IParseFn;
+  decryptFn?: IEncryptFn;
 }
 
 type IParseFn = (data: string) => any;
@@ -93,6 +102,11 @@ export const setGlobalParseFn = (fn: IParseFn) => {
   globalParseFn = fn;
 };
 
+let globalDecryptFn: IEncryptFn | undefined = undefined;
+export const setGlobalDecryptFn = (fn: IEncryptFn) => {
+  globalDecryptFn = fn;
+};
+
 /**
  * @param {string} key
  * @param {object} [config]
@@ -102,6 +116,7 @@ export const setGlobalParseFn = (fn: IParseFn) => {
  * @param {boolean} [config.isDeleteExpired] default false, delete expired data
  * @param {function} [config.parseFn] default globalParseFn, falsy - JSON.parse,
  * This method parses a JSON string
+ * @param {function} [config.decryptFn] default globalDecryptFn(undefined)
  * @returns
  */
 export const getStorage = <T = unknown>(
@@ -110,24 +125,28 @@ export const getStorage = <T = unknown>(
     isLocalStorage = true,
     prefix = globalPrefix,
     isDeleteExpired,
-    parseFn = globalParseFn
+    parseFn = globalParseFn,
+    decryptFn = globalDecryptFn
   }: IGetStorageConfig = {}
 ) => {
   try {
     const name = `${prefix}${key}`;
-    const jsonText = isLocalStorage
+    let json = isLocalStorage
       ? localStorage.getItem(name)
       : sessionStorage.getItem(name);
 
-    if (jsonText === null) {
+    if (json === null) {
       console.warn(`not found ${name}`);
       return null;
+    }
+    if (decryptFn) {
+      json = decryptFn(json);
     }
     if (!parseFn) {
       parseFn = JSON.parse;
     }
 
-    const storage: IStorage<T> = parseFn(jsonText);
+    const storage: IStorage<T> = parseFn(json);
     if (storage.expire && storage.expire <= Date.now()) {
       if (isDeleteExpired) {
         removeStorage(key, { isLocalStorage, prefix });

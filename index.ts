@@ -2,6 +2,8 @@ import {
   setGlobalPrefix,
   setGlobalStringifyFn,
   setGlobalParseFn,
+  setGlobalEncryptFn,
+  setGlobalDecryptFn,
   setStorage,
   getStorage,
   removeStorage
@@ -13,6 +15,8 @@ export {
   setGlobalPrefix,
   setGlobalStringifyFn,
   setGlobalParseFn,
+  setGlobalEncryptFn,
+  setGlobalDecryptFn,
   setStorage,
   getStorage,
   removeStorage,
