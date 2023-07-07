@@ -13,9 +13,7 @@ test('stringify', () => {
   expect(stringify(NaN)).toBe('"type: {{number}}-value: {{NaN}}"');
   expect(stringify(123n)).toBe('"type: {{bigint}}-value: {{123}}"');
   expect(stringify(Infinity)).toBe('"type: {{number}}-value: {{Infinity}}"');
-  expect(stringify(-Infinity)).toBe(
-    '"type: {{number}}-value: {{-Infinity}}"'
-  );
+  expect(stringify(-Infinity)).toBe('"type: {{number}}-value: {{-Infinity}}"');
 
   expect(stringify(new Date(1688543045842))).toBe(
     '"type: {{date}}-value: {{1688543045842}}"'
@@ -50,4 +48,10 @@ test('stringify', () => {
   ).toBe(
     '[{"test":"type: {{number}}-value: {{Infinity}}"},{"date":"type: {{date}}-value: {{1688543045842}}"},"type: {{date}}-value: {{1688543045842}}","type: {{bigint}}-value: {{123}}","type: {{number}}-value: {{NaN}}","type: {{undefined}}-value: {{undefined}}"]'
   );
+
+  expect(
+    stringify({ a: 1, b: 2 }, (_k, v) => {
+      return v * 2;
+    })
+  ).toBe('{"a":2,"b":4}');
 });

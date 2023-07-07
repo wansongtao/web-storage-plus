@@ -63,4 +63,10 @@ test('parse', () => {
   ).toBeFunc(function () {
     console.log('test');
   });
+
+  expect(
+    parse('{"a":2,"b":4}', (_k, v) => {
+      return v / 2;
+    })
+  ).toStrictEqual({ a: 1, b: 2 });
 });
