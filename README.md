@@ -84,13 +84,39 @@ Set the global function to convert JSON strings to JS values. `globalParseFn` de
 Set the global function to encrypt the string. `globalEncryptFn` default `null`.
 ### setGlobalDecryptFn(decryptFn)
 Set the global function to decrypt the encrypted string. `globalDecryptFn` default `null`.
-### stringify(data)
-enhanced `JSON.stringify`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.
-### parse(json)
-enhanced `JSON.parse`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.
-### encode(data)
+### stringify(data, [replacer])
+enhanced `JSON.stringify`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.  
+optionally replacing values if a replacer function is specified.
+```typescript
+import { stringify } from 'web-storage-plus'
+
+const test = { a: 1,b: 2 }
+
+stringify(test, (key, value) => {
+  if (key === 'a') {
+    return value + 1
+  }
+  return value
+}) // {"a":2,"b":2}
+```
+### parse(json, [reviver])
+enhanced `JSON.parse`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.  
+An optional reviver function can be provided to perform a transformation on the resulting object before it is returned.
+```typescript
+import { parse } from 'web-storage-plus'
+
+const json = '{"a":1,"b":2}'
+
+parse(json, (key, value) => {
+  if (key === 'a') {
+    return value + 1
+  }
+  return value
+}) // {a: 2, b: 2}
+```
+### encode(str)
 encode string to base64.
-### decode(data)
+### decode(str)
 decode base64 to string.
 ## Test
 [Test cases](https://github.com/wansongtao/web-storage-plus/blob/main/test/storage.test.ts)

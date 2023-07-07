@@ -82,13 +82,39 @@ parse(json) // {a: /[0-9]+/gi, b: new Date(1688543045842),k: 'type: {{t}}-value:
 设置加密字符串的全局函数。`globalEncryptFn` 默认值为 `null`。
 ### setGlobalDecryptFn(decryptFn)
 设置解密已加密字符串的全局函数。`globalDecryptFn` 默认值为 `null`。
-### stringify(data)
-增强版的 `JSON.stringify`，额外支持function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint类型。
-### parse(json)
-增强版的 `JSON.parse`，额外支持function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint类型。
-### encode(data)
+### stringify(data, [replacer])
+增强版的 `JSON.stringify`，额外支持function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint类型。  
+如果指定了一个 replacer 函数，则可以选择性地替换值。
+```typescript
+import { stringify } from 'web-storage-plus'
+
+const test = { a: 1,b: 2 }
+
+stringify(test, (key, value) => {
+  if (key === 'a') {
+    return value + 1
+  }
+  return value
+}) // {"a":2,"b":2}
+```
+### parse(json, [reviver])
+增强版的 `JSON.parse`，额外支持function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint类型。  
+提供可选的 reviver 函数用以在返回之前对所得到的对象执行变换 (操作)。
+```typescript
+import { parse } from 'web-storage-plus'
+
+const json = '{"a":1,"b":2}'
+
+parse(json, (key, value) => {
+  if (key === 'a') {
+    return value + 1
+  }
+  return value
+}) // {a: 2, b: 2}
+```
+### encode(str)
 将字符串编码为base64格式。
-### decode(data)
+### decode(str)
 将base64格式的字符串解码。
 ## 测试
 [测试用例](https://github.com/wansongtao/web-storage-plus/blob/main/test/storage.test.ts)
