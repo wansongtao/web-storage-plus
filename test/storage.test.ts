@@ -3,11 +3,15 @@ import {
   setGlobalPrefix,
   setGlobalStringifyFn,
   setGlobalParseFn,
+  setGlobalDecryptFn,
+  setGlobalEncryptFn,
   setStorage,
   getStorage,
   removeStorage,
   stringify,
-  parse
+  parse,
+  decode,
+  encode
 } from '../index';
 
 test('storage', () => {
@@ -82,5 +86,32 @@ test('storage', () => {
     j: expect.any(Function),
     k: 'type: {{regexp}}-value: {{/[0-9]+/gi}}'
   });
-  console.log(val, val.d(), val.i(), val.j());
+  // console.log(val, val.d(), val.i(), val.j());
+
+  expect(setStorage('k5', 'value', { encryptFn: (v) => v }));
+  expect(getStorage('k5', { decryptFn: (v) => v })).toBe('value');
+
+  expect(setGlobalEncryptFn(encode));
+  expect(setGlobalDecryptFn(decode));
+  expect(setStorage('k6', 'value'));
+  expect(getStorage('k6')).toBe('value');
+
+  (test as any).cn = '中文😜';
+  expect(setStorage('k7', test, { maxAge: 1 }));
+  expect(getStorage('k7')).toEqual({
+    a: expect.any(RegExp),
+    b: expect.any(Date),
+    c: undefined,
+    d: expect.any(Function),
+    e: Infinity,
+    f: -Infinity,
+    g: NaN,
+    h: 1234534n,
+    i: expect.any(Function),
+    j: expect.any(Function),
+    k: 'type: {{regexp}}-value: {{/[0-9]+/gi}}',
+    cn: '中文😜'
+  });
+
+  // console.log(getStorage('k7', { isDeleteExpired: true }));
 });
