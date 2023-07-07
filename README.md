@@ -1,6 +1,7 @@
+English | [简体中文](https://github.com/wansongtao/web-storage-plus/blob/main/README.zh-CN.md)
 # web-storage-plus
-Enhanced browser localStorage and sessionStorage, support for setting expiration time, key name prefix, functions to convert JS values to JSON strings, and functions to convert JSON strings to JS values.  
-浏览器本地存储与会话存储加强，支持设置过期时间、键名前缀、将js值转换json字符串的函数、json字符串转换为js值的函数。
+Enhanced browser localStorage and sessionStorage, support for setting expiration time, key name prefix, functions to convert JS values to JSON strings, functions to convert JSON strings to JS values, encrypt functions, and decrypt functions.  
+
 ## Install
 ```bash
 $ npm install web-storage-plus
@@ -12,17 +13,14 @@ $ pnpm add web-storage-plus
 ## Example
 ### simple
 ```typescript
-import { setStorage, getStorage, removeStorage, setGlobalPrefix } from 'web-storage-plus'
+import { setStorage, getStorage } from 'web-storage-plus'
 
-setGlobalPrefix('t-')
 const data = { name: 'test', data: 'this is a test.' }
 
 setStorage('storage', data)
-// setStorage('storage', data, { maxAge: 60 * 60 * 24 * 7 })
 getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 'this is a test.' }
-removeStorage('storage')
 ```
-### complete
+### more
 ```typescript
 import { setStorage, getStorage, removeStorage, stringify, parse, setGlobalStringifyFn, setGlobalParseFn, setGlobalPrefix } from 'web-storage-plus'
 
@@ -37,8 +35,10 @@ setGlobalPrefix('t-')
 setGlobalStringifyFn(JSON.stringify)
 setGlobalParseFn(JSON.parse)
 
-setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify })
-getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse })
+setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify, encryptFn: (v) => encodeURIComponent(v) })
+
+getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) })
+
 removeStorage('s', { prefix: '', isLocalStorage: false })
 
 /**
@@ -60,6 +60,7 @@ If the options object is provided:
 - `options.prefix` - a string representing the prefix of the key name(default globalPrefix).
 - `options.isLocalStorage` - a boolean representing the type of Web Storage(default true).
 - `options.stringifyFn` - a function representing the function to convert JS values to JSON strings(default globalStringifyFn).
+- `options.encryptFn` - a function representing the function to encrypt the JSON string(default null).
 ### getStorage(key, [options])
 Get the value of the given key in localStorage or sessionStorage.  
 If the options object is provided:
@@ -67,6 +68,7 @@ If the options object is provided:
 - `options.isLocalStorage` - a boolean representing the type of Web Storage(default true).
 - `options.isDeleteExpired` - a boolean representing whether to delete the expired key-value(default false).
 - `options.parseFn` - a function representing the function to convert JSON strings to JS values(default globalParseFn).
+- `options.decryptFn` - a function representing the function to decrypt the encrypted string(default null).
 ### removeStorage(key, [options])
 Remove the given key in localStorage or sessionStorage.  
 If the options object is provided:
@@ -77,11 +79,19 @@ Set the global prefix of the key name. `globalPrefix` default `'st-'`.
 ### setGlobalStringifyFn(stringifyFn)
 Set the global function to convert JS values to JSON strings. `globalStringifyFn` default `JSON.stringify`.
 ### setGlobalParseFn(parseFn)
-Set the global function to convert JSON strings to JS values. `setGlobalParseFn` default `JSON.parse`.
+Set the global function to convert JSON strings to JS values. `globalParseFn` default `JSON.parse`.
+### setGlobalEncryptFn(encryptFn)
+Set the global function to encrypt the string. `globalEncryptFn` default `null`.
+### setGlobalDecryptFn(decryptFn)
+Set the global function to decrypt the encrypted string. `globalDecryptFn` default `null`.
 ### stringify(data)
 enhanced `JSON.stringify`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.
 ### parse(json)
 enhanced `JSON.parse`, support function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.
+### encode(data)
+encode string to base64.
+### decode(data)
+decode base64 to string.
 ## Test
 [Test cases](https://github.com/wansongtao/web-storage-plus/blob/main/test/storage.test.ts)
 ## License
