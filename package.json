@@ -1,7 +1,7 @@
 {
   "name": "web-storage-plus",
   "description": "localStorage, sessionStorage, support setting expiration time, encrypt, decrypt, etc.(本地/会话存储，支持设置过期时间、加解密等)",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "type": "module",
   "files": [
     "dist"
