@@ -42,7 +42,7 @@ export const stringify = (
           value = `type: {{date}}-value: {{${value.getTime()}}}`;
         }
 
-        if (key !== '' && replacer) {
+        if (replacer && (key !== '' || typeof value !== 'object')) {
           value = replacer(key, value);
         }
       } catch (e) {
