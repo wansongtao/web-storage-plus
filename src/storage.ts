@@ -37,11 +37,10 @@ export const setGlobalEncryptFn = (fn: IEncryptFn) => {
  * @param {string} key
  * @param {any} value
  * @param {object} [config]
- * @param {boolean} [config.isLocalStorage] default true,
- * true - localStorage, false - sessionStorage
+ * @param {boolean} [config.isLocalStorage] default true, false - sessionStorage
  * @param {number} [config.maxAge] Expiration time, in seconds
- * @param {string} [config.prefix] default globalPrefix
- * @param {function} [config.stringifyFn] default globalStringifyFn,
+ * @param {string} [config.prefix] default globalPrefix('st-')
+ * @param {function} [config.stringifyFn] default globalStringifyFn(undefined),
  * falsy - JSON.stringify,
  * This method converts the JavaScript value to a JSON string
  * @param {function} [config.encryptFn] default globalEncryptFn(undefined)
@@ -110,11 +109,10 @@ export const setGlobalDecryptFn = (fn: IEncryptFn) => {
 /**
  * @param {string} key
  * @param {object} [config]
- * @param {boolean} [config.isLocalStorage] default true,
- * true - localStorage, false - sessionStorage
- * @param {string} [config.prefix] default globalPrefix
+ * @param {boolean} [config.isLocalStorage] default true, false - sessionStorage
+ * @param {string} [config.prefix] default globalPrefix('st-')
  * @param {boolean} [config.isDeleteExpired] default false, delete expired data
- * @param {function} [config.parseFn] default globalParseFn, falsy - JSON.parse,
+ * @param {function} [config.parseFn] default globalParseFn(undefined), falsy - JSON.parse,
  * This method parses a JSON string
  * @param {function} [config.decryptFn] default globalDecryptFn(undefined)
  * @returns
@@ -166,9 +164,8 @@ export const getStorage = <T = unknown>(
 /**
  * @param {string} key
  * @param {object} [config]
- * @param {boolean} [config.isLocalStorage] default true, 
- * true - localStorage, false - sessionStorage
- * @param {string} [config.prefix] default globalPrefix
+ * @param {boolean} [config.isLocalStorage] default true, false - sessionStorage
+ * @param {string} [config.prefix] default globalPrefix('st-')
  */
 export const removeStorage = (
   key: string,
