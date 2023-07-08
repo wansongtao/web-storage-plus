@@ -69,4 +69,5 @@ test('parse', () => {
       return v / 2;
     })
   ).toStrictEqual({ a: 1, b: 2 });
+  expect(parse('1', (_k, v) => v * 2)).toBe(2);
 });
