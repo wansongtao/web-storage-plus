@@ -1,6 +1,6 @@
 {
   "name": "web-storage-plus",
-  "description": "Enhanced localStorage and sessionStorage, support expiration time, encrypt/decrypt, namespace, More data types than JSON.stringify, etc.(增强本地/会话存储，支持过期时间、加解密函数、命名空间、比JSON.stringify方法支持更多的数据类型等)",
+  "description": "Enhanced localStorage and sessionStorage, support expiration time, encrypt/decrypt, namespace, More data types than JSON.stringify, etc.(增强本地/会话存储，支持过期时间、加解密函数、命名空间、比JSON.stringify方法支持更多的数据类型)",
   "version": "1.4.3",
   "type": "module",
   "files": [
