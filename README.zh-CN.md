@@ -39,18 +39,20 @@ setGlobalPrefix('t-')
 setGlobalStringifyFn(JSON.stringify)
 setGlobalParseFn(JSON.parse)
 
+// 这里设置的prefix、stringifyFn、encryptFn会覆盖全局的
 setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify, encryptFn: (v) => encodeURIComponent(v) })
 
-getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) })
+getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) }) // 返回和 test 一样的对象，即 test.a 是一个一样的正则表达式，test.b 是一个一样的Date对象
 
 removeStorage('s', { prefix: '', isLocalStorage: false })
 
 /**
+ * 转换结果：
  * {
  * "a":"type: {{regexp}}-value: {{/[0-9]+/gi}}",
  * "b":"type: {{date}}-value: {{1688543045842}}",
  * "k":"type: {{original}}-value: {{type: {{t}}-value: {{1}}}}",
- * "test":1
+ * "test": 1
  * }
  */
 const json = stringify(test)

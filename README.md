@@ -43,7 +43,7 @@ setGlobalParseFn(JSON.parse)
 
 setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify, encryptFn: (v) => encodeURIComponent(v) })
 
-getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) })
+getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) }) // return test object
 
 removeStorage('s', { prefix: '', isLocalStorage: false })
 
