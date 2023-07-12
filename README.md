@@ -2,6 +2,9 @@ English | [简体中文](https://github.com/wansongtao/web-storage-plus/blob/mai
 # web-storage-plus
 Enhanced browser localStorage and sessionStorage, support for setting expiration time, key name prefix, functions to convert JS values to JSON strings, functions to convert JSON strings to JS values, encrypt functions, and decrypt functions.  
 
+Provides stringify/parse functions, compared to the JSON.stringify/JSON.parse method, additional support for function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.   
+
+Provide encode/decode functions to convert strings to base64 encoding or base64 encoding to strings, which can be used for encryption when security requirements are not high, and when security requirements are high, it is recommended to use your own encryption and decryption functions.    
 ## Install
 ```bash
 $ npm install web-storage-plus
@@ -19,6 +22,9 @@ const data = { name: 'test', data: 'this is a test.' }
 
 setStorage('storage', data)
 getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 'this is a test.' }
+
+setStorage('test', data, { maxAge: 60 * 60 * 24 })
+getStorage('test', { isDeleteExpired: true })
 ```
 ### more
 ```typescript

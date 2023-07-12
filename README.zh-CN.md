@@ -1,5 +1,8 @@
 # web-storage-plus
-增强浏览器的localStorage和sessionStorage API，支持设置过期时间、键名前缀、js值JSON化的函数、解析JSON的函数、加密函数和解密函数。
+增强浏览器的localStorage和sessionStorage API，支持设置过期时间、键名前缀、自定义json化与解析函数、加解密函数。  
+提供stringify/parse函数，相比JSON.stringify/JSON.parse方法，额外支持了function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint。  
+提供encode/decode函数，用于将字符串转换为base64编码或将base64编码转换为字符串，安全性要求不高时可用来加密，安全性要求较高时，推荐使用您自己编写的加解密函数。  
+以上函数都是可选的，如果您不需要，可以不用引入。
 ## 安装
 ```bash
 $ npm install web-storage-plus
@@ -17,6 +20,9 @@ const data = { name: 'test', data: 'this is a test.' }
 
 setStorage('storage', data)
 getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 'this is a test.' }
+
+setStorage('test', data, { maxAge: 60 * 60 * 24 })
+getStorage('test', { isDeleteExpired: true })
 ```
 ### 更多
 ```typescript
