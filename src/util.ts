@@ -42,7 +42,7 @@ export const stringify = (
           value = `type: {{date}}-value: {{${value.getTime()}}}`;
         }
 
-        if (key !== '' && replacer) {
+        if (replacer && (key !== '' || typeof value !== 'object')) {
           value = replacer(key, value);
         }
       } catch (e) {
@@ -122,10 +122,8 @@ export const parse = <T = any>(
 
   return JSON.parse(str, (key, value) => {
     try {
-      if (typeof value !== 'string') {
-        if (key !== '' && reviver) {
-          return reviver(key, value);
-        }
+      // When traversed to the top level and the resolved value is an object, all its values have been converted
+      if (key === '' && typeof value === 'object') {
         return value;
       }
 
@@ -137,7 +135,7 @@ export const parse = <T = any>(
         }
       }
 
-      if (key !== '' && reviver) {
+      if (reviver) {
         return reviver(key, value);
       }
     } catch (e) {

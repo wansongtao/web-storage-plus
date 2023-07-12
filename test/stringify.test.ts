@@ -54,4 +54,5 @@ test('stringify', () => {
       return v * 2;
     })
   ).toBe('{"a":2,"b":4}');
+  expect(stringify(1, (_k, v) => v * 2)).toBe('2');
 });
