@@ -115,3 +115,16 @@ test('storage', () => {
 
   // console.log(getStorage('k7', { isDeleteExpired: true }));
 });
+
+test('storage: async/sync', async () => {
+  expect(setStorage('async1', 'value', { isAsync: true, maxAge: 1 }));
+  expect(getStorage('async1', { isDeleteExpired: true })).toBe(null);
+
+  expect(setStorage('async2', 'value', { isAsync: false }));
+  expect(getStorage('async2')).toBe('value');
+  expect(removeStorage('async2'));
+
+  expect(setStorage('async3', 'value', { isAsync: true }));
+  expect(await getStorage('async3', { isAsync: true })).toBe('value');
+  expect(removeStorage('async3', { isAsync: true }));
+});
