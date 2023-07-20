@@ -1,5 +1,5 @@
 # web-storage-plus
-增强浏览器的localStorage和sessionStorage API，支持设置过期时间、键名前缀、自定义json化与解析函数、加解密函数。  
+增强浏览器的localStorage和sessionStorage API，支持设置过期时间、命名空间、异步/同步、自定义json化与解析函数、加解密函数。  
 提供stringify/parse函数，相比JSON.stringify/JSON.parse方法，额外支持了function、regexp、date、undefined、NaN、Infinity、-Infinity、bigint。  
 提供encode/decode函数，用于将字符串转换为base64编码或将base64编码转换为字符串，安全性要求不高时可用来加密，安全性要求较高时，推荐使用您自己编写的加解密函数。  
 以上函数都是可选的，如果您不需要，可以不用引入。
@@ -23,40 +23,29 @@ getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 
 
 setStorage('test', data, { maxAge: 60 * 60 * 24 })
 getStorage('test', { isDeleteExpired: true })
+
+setStorage('test', data, { isAsync: true }).then(() => {
+  console.log('setStorage success.');
+});
+(getStorage('test', { isAsync: true }) as Promise<{ name: string; data: string; } | null>).then((data) => {
+  console.log('getStorage success.', data);
+});
 ```
-### 更多
-```typescript
-import { setStorage, getStorage, removeStorage, stringify, parse, setGlobalStringifyFn, setGlobalParseFn, setGlobalPrefix } from 'web-storage-plus'
+``` javascript
+// 浏览器中运行
+import { setStorage, getStorage } from 'web-storage-plus';
 
-const test = {
-  a: /[0-9]+/gi,
-  b: new Date(1688543045842),
-  k: 'type: {{t}}-value: {{1}}',
-  test: 1
-}
+const data = { name: 'test', data: 'this is a test.' };
 
-setGlobalPrefix('t-')
-setGlobalStringifyFn(JSON.stringify)
-setGlobalParseFn(JSON.parse)
+setStorage('test', data, { maxAge: 60 * 60 * 24 });
+getStorage('test', { isDeleteExpired: true });
 
-// 这里设置的prefix、stringifyFn、encryptFn会覆盖全局的
-setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify, encryptFn: (v) => encodeURIComponent(v) })
-
-getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) }) // 返回和 test 一样的对象，即 test.a 是一个一样的正则表达式，test.b 是一个一样的Date对象
-
-removeStorage('s', { prefix: '', isLocalStorage: false })
-
-/**
- * 转换结果：
- * {
- * "a":"type: {{regexp}}-value: {{/[0-9]+/gi}}",
- * "b":"type: {{date}}-value: {{1688543045842}}",
- * "k":"type: {{original}}-value: {{type: {{t}}-value: {{1}}}}",
- * "test": 1
- * }
- */
-const json = stringify(test)
-parse(json) // {a: /[0-9]+/gi, b: new Date(1688543045842),k: 'type: {{t}}-value: {{1}}', test: 1}
+setStorage('test', data, { isAsync: true }).then(() => {
+  console.log('setStorage success.');
+});
+getStorage('test', { isAsync: true }).then((data) => {
+  console.log('getStorage success.', data);
+});
 ```
 ## 方法
 ### setStorage(key, value, [options])
@@ -67,6 +56,7 @@ parse(json) // {a: /[0-9]+/gi, b: new Date(1688543045842),k: 'type: {{t}}-value:
 - `options.isLocalStorage` - 一个布尔值，表示Web Storage的类型(默认 true)。
 - `options.stringifyFn` - 一个函数，表示将js值转换为JSON字符串的函数(默认 globalStringifyFn)。
 - `options.encryptFn` - 一个函数，表示加密JSON字符串的函数(默认不加密)。
+- `options.isAsync` - 一个布尔值，表示是否异步存储(默认 false)。
 ### getStorage(key, [options])
 根据给定的键名从localStorage或sessionStorage中获取值。  
 如果提供了options对象：
@@ -75,11 +65,13 @@ parse(json) // {a: /[0-9]+/gi, b: new Date(1688543045842),k: 'type: {{t}}-value:
 - `options.isDeleteExpired` - 一个布尔值，表示是否删除过期的键值对(默认 false)。
 - `options.parseFn` - 一个函数，表示解析JSON字符串的函数(默认 globalParseFn)。
 - `options.decryptFn` - 一个函数，表示解密JSON字符串的函数(默认 null)。
+- `options.isAsync` - 一个布尔值，表示是否异步获取(默认 false)。
 ### removeStorage(key, [options])
 根据给定的键名从localStorage或sessionStorage中删除值。  
 如果提供了options对象：
 - `options.prefix` - 一个字符串，表示键名的前缀(默认 globalPrefix)。
 - `options.isLocalStorage` - 一个布尔值，表示Web Storage的类型(默认 true)。
+- `options.isAsync` - 一个布尔值，表示是否异步删除(默认 false)。
 ### setGlobalPrefix(prefix)
 设置键名的全局前缀。`globalPrefix` 默认值为 `'st-'`。
 ### setGlobalStringifyFn(stringifyFn)

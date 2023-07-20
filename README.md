@@ -1,6 +1,6 @@
 English | [简体中文](https://github.com/wansongtao/web-storage-plus/blob/main/README.zh-CN.md)
 # web-storage-plus
-Enhanced browser localStorage and sessionStorage, support for setting expiration time, key name prefix, functions to convert JS values to JSON strings, functions to convert JSON strings to JS values, encrypt functions, and decrypt functions.  
+Enhanced browser localStorage and sessionStorage, support for setting expiration time, key name prefix, sync/async,  functions to convert JS values to JSON strings, functions to convert JSON strings to JS values, encrypt functions, and decrypt functions.  
 
 Provides stringify/parse functions, compared to the JSON.stringify/JSON.parse method, additional support for function, regexp, date, undefined, NaN, Infinity, -Infinity, bigint.   
 
@@ -25,38 +25,29 @@ getStorage<{ name: string; data: string; }>('storage') // { name: 'test', data: 
 
 setStorage('test', data, { maxAge: 60 * 60 * 24 })
 getStorage('test', { isDeleteExpired: true })
+
+setStorage('test', data, { isAsync: true }).then(() => {
+  console.log('setStorage success.');
+});
+(getStorage('test', { isAsync: true }) as Promise<{ name: string; data: string; } | null>).then((data) => {
+  console.log('getStorage success.', data);
+});
 ```
-### more
-```typescript
-import { setStorage, getStorage, removeStorage, stringify, parse, setGlobalStringifyFn, setGlobalParseFn, setGlobalPrefix } from 'web-storage-plus'
+``` javascript
+// 浏览器中运行
+import { setStorage, getStorage } from 'web-storage-plus';
 
-const test = {
-  a: /[0-9]+/gi,
-  b: new Date(1688543045842),
-  k: 'type: {{t}}-value: {{1}}',
-  test: 1
-}
+const data = { name: 'test', data: 'this is a test.' };
 
-setGlobalPrefix('t-')
-setGlobalStringifyFn(JSON.stringify)
-setGlobalParseFn(JSON.parse)
+setStorage('test', data, { maxAge: 60 * 60 * 24 });
+getStorage('test', { isDeleteExpired: true });
 
-setStorage('s', test, { maxAge: 1, prefix: '', isLocalStorage: false, stringifyFn: stringify, encryptFn: (v) => encodeURIComponent(v) })
-
-getStorage('s', { prefix: '', isLocalStorage: false, isDeleteExpired: true, parseFn: parse, decryptFn: (v) => decodeURIComponent(v) }) // return test object
-
-removeStorage('s', { prefix: '', isLocalStorage: false })
-
-/**
- * {
- * "a":"type: {{regexp}}-value: {{/[0-9]+/gi}}",
- * "b":"type: {{date}}-value: {{1688543045842}}",
- * "k":"type: {{original}}-value: {{type: {{t}}-value: {{1}}}}",
- * "test":1
- * }
- */
-const json = stringify(test)
-parse(json) // {a: /[0-9]+/gi, b: new Date(1688543045842),k: 'type: {{t}}-value: {{1}}', test: 1}
+setStorage('test', data, { isAsync: true }).then(() => {
+  console.log('setStorage success.');
+});
+getStorage('test', { isAsync: true }).then((data) => {
+  console.log('getStorage success.', data);
+});
 ```
 ## API
 ### setStorage(key, value, [options])
@@ -67,6 +58,7 @@ If the options object is provided:
 - `options.isLocalStorage` - a boolean representing the type of Web Storage(default true).
 - `options.stringifyFn` - a function representing the function to convert JS values to JSON strings(default globalStringifyFn).
 - `options.encryptFn` - a function representing the function to encrypt the JSON string(default null).
+- `options.isAsync` - a boolean representing whether to use asynchronous(default false).
 ### getStorage(key, [options])
 Get the value of the given key in localStorage or sessionStorage.  
 If the options object is provided:
@@ -75,11 +67,13 @@ If the options object is provided:
 - `options.isDeleteExpired` - a boolean representing whether to delete the expired key-value(default false).
 - `options.parseFn` - a function representing the function to convert JSON strings to JS values(default globalParseFn).
 - `options.decryptFn` - a function representing the function to decrypt the encrypted string(default null).
+- `options.isAsync` - a boolean representing whether to use asynchronous(default false).
 ### removeStorage(key, [options])
 Remove the given key in localStorage or sessionStorage.  
 If the options object is provided:
 - `options.prefix` - a string representing the prefix of the key name(default globalPrefix).
 - `options.isLocalStorage` - a boolean representing the type of Web Storage(default true).
+- `options.isAsync` - a boolean representing whether to use asynchronous(default false).
 ### setGlobalPrefix(prefix)
 Set the global prefix of the key name. `globalPrefix` default `'st-'`.
 ### setGlobalStringifyFn(stringifyFn)
