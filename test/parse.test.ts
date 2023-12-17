@@ -57,6 +57,9 @@ test('parse', () => {
   expect(parse(`"type: {{function}}-value: {{() => {\\n  }}}"`)).toBeFunc(
     () => {}
   );
+  expect(parse(`"type: {{function}}-value: {{(a) => {\\n  }}}"`)).toBeFunc(
+    (a: any) => {}
+  );
 
   expect(
     parse('"type: {{function}}-value: {{() {\\n      console.log(\\"test\\");\\n    }}}"')

@@ -85,7 +85,7 @@ export const parse = <T = any>(
     | 'bigint';
   const strategies: Record<IType, (text: string) => any> = {
     function: (text: string) => {
-      if (/^\(\) =>/.test(text)) {
+      if (/^\([^]*\) =>/.test(text)) {
         return new Function(`return ${text}`)();
       }
 
